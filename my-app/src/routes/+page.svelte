@@ -1,7 +1,6 @@
 <script>
   let userPrompt = "";
-  let systemPrompt =
-    "Summarize content you are provided with for a second-grade student.";
+  let systemPrompt = "Mutate the user prompt into four new prompts.";
 
   $: promptVariables = userPrompt
     .match(/\{(.*?)\}/g)
@@ -54,44 +53,49 @@
   }
 </script>
 
-<h1 class="text-2xl font-bold">PromptBreeder</h1>
-<main class="flex items-start flex-row px-12 py-8 w-full">
-  <section class="w-1/4">
-    <label for="userPrompt">Input Prompt</label>
-    <textarea
-      id="userPrompt"
-      type="text"
-      bind:value={userPrompt}
-      placeholder="Insert the prompt here"
-      class="input border border-slate-500 rounded w-full"
-    />
-    {#if promptVariables}
-      {#each promptVariables as v, i}
-        <div class="flex flex-row items-center justify-start">
-          <span class="">{i} :</span>
-          <input
-            bind:value={dataVariables[i]}
-            class="input border border-gray-500 rounded"
-          />
-        </div>
-      {/each}
-    {/if}
-    <h3>Meta Prompt</h3>
-    <textarea
-      type="text"
-      bind:value={systemPrompt}
-      placeholder={systemPrompt}
-      class="input border border-slate-500 rounded w-full"
-    />
-    <button
-      on:click={sendPrompt}
-      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-    >
-      Generate
-    </button>
-  </section>
-  <section class="flex w-3/4 flex-wrap">
-    <div class="container m-auto grid grid-cols-2 gap-4">
+<main class="h-full">
+  <h1 class="text-2xl font-bold">PromptBreeder</h1>
+  <div class="flex items-start flex-row px-8 py-8 w-full">
+    <section class="w-1/4 mr-4">
+      <label for="userPrompt">Input Prompt</label>
+      <textarea
+        rows="10"
+        id="userPrompt"
+        type="text"
+        bind:value={userPrompt}
+        placeholder="Insert the prompt here"
+        class="block p-2.5 border border-slate-500 rounded w-full text-sm text-gray-900 focus:ring-blue-300"
+      />
+      {#if promptVariables}
+        <h3>Prompt Variables</h3>
+        {#each promptVariables as v, i}
+          <div class="flex flex-row items-center justify-start">
+            <label for={`input-${i}`} class="">{i}</label>
+            <input
+              id={`input-${i}`}
+              bind:value={dataVariables[i]}
+              class="input border border-gray-500 rounded"
+            />
+          </div>
+        {/each}
+      {/if}
+      <label for="systemPrompt">Mutate Prompt</label>
+      <textarea
+        type="text"
+        rows="10"
+        id="systemPrompt"
+        bind:value={systemPrompt}
+        placeholder={systemPrompt}
+        class="block p-2.5 border border-slate-500 rounded w-full text-sm text-gray-900 focus:ring-blue-300"
+      />
+      <button
+        on:click={sendPrompt}
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
+        Mutate
+      </button>
+    </section>
+    <!-- <section class="flex w-3/4 flex-wrap">
     {#each arr as item}
       <!-- <div class="max-w-lg bg-slate-50">{item}</div> -->
         <div class="tile bg-teal-500 overflow-y-scroll">
@@ -114,4 +118,10 @@
 </main>
 
 <style>
+  main {
+    height: 100%;
+  }
+  label {
+    color: slategray;
+  }
 </style>

@@ -96,7 +96,7 @@ def complete_parallel_streamed(messages, **kwargs):
                 yield text, idx
 
     agenerator = _complete_parallel_streamed()
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
     return iter_over_async(agenerator, loop)
 
 

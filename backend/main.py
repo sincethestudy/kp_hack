@@ -1,9 +1,8 @@
 from typing import Union
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from fastapi.responses import StreamingResponse
-import time
 import json
 
 import os
@@ -12,8 +11,9 @@ import openai
 openai.organization = os.getenv("OPENAI_ORG")
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-from grid import Grid
-from prompt import Prompt
+from mutate import mutate_prompt
+from generate import generate_parallel
+
 
 origins = [
     "http://localhost.tiangolo.com",
@@ -35,16 +35,17 @@ app.add_middleware(
 )
 
 
-class Item(BaseModel):
+GRID_SIZE = 2*2
+
+class GenerationItem(BaseModel):
     system_message: str
-    user_message: str
-    inputs: Union[str, list]
+    prompts: list
+    inputs: list
 
 
-def data_streamer(data):
-    for character in data:
-        yield character
-        time.sleep(0.01)
+class MutationItem(BaseModel):
+    prompt: str
+    instructions: str
 
 
 @app.get("/")
@@ -52,18 +53,23 @@ def read_root():
     return {"Hello": openai.Model.list()}
 
 
-@app.post("/complete")
-def complete(item: Item):
+@app.post("/mutate")
+def mutate(item: MutationItem):
+    prompt = item.prompt
+    instructions = item.instructions
+    return mutate_prompt(prompt, instructions, n=GRID_SIZE)
+
+
+@app.post("/generate")
+def generate(item: GenerationItem):
     system_message = item.system_message
-    user_message = item.user_message
+    prompts = item.prompts
     inputs = item.inputs
 
-    prompt = Prompt(system_message, user_message)
-    grid = Grid(prompt, (2, 2))
-
     def data_streamer():
-        for text, idx in grid.sample_one(inputs):
+        for text, idx in generate_parallel(system_message, inputs, prompts):
             yield json.dumps({"text": text, "box_idx": idx}) + "\n"
+    
     return StreamingResponse(
         data_streamer(), media_type="text/event-stream"
     )  # type: ignore

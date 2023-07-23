@@ -97,7 +97,7 @@
     </section>
     <div class="container m-auto grid grid-cols-2 gap-4">
       {#each arr as item}
-        <div class="tile bg-teal-500 overflow-y-scroll">
+        <div class="sticky top-15 z-0 flex h-24 flex-shrink-0 bg-neutral-600 bg-opacity-25 backdrop-blur-3xl">
           <h1 class="tile-marker overflow-y-scroll">{item}</h1>
         </div>
       {/each}

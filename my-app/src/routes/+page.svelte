@@ -1,9 +1,9 @@
 <script>
   import GridItem from "./GridItem.svelte";
-  let userPrompt = "";
+  import { userPrompt } from "../store.js";
   let systemPrompt = "Mutate the user prompt into four new prompts.";
 
-  $: promptVariables = userPrompt
+  $: promptVariables = $userPrompt
     .match(/\{(.*?)\}/g)
     ?.map((v) => v.slice(1, -1));
   $: console.log(promptVariables);
@@ -12,15 +12,15 @@
   let arr = [
     {
       completion: "This is a completion",
-      prompt: "This is the original prompt",
+      prompt: "111111111111111111111111111",
     },
     {
       completion: "This is a completion",
-      prompt: "This is the original prompt",
+      prompt: "222222222222222222222222222",
     },
     {
       completion: "This is a completion",
-      prompt: "This is the original prompt",
+      prompt: "333333333333333333333333333",
     },
   ];
 
@@ -36,7 +36,7 @@
       },
       body: JSON.stringify({
         system_message: systemPrompt,
-        user_message: userPrompt,
+        user_message: $userPrompt,
         inputs: dataVariables,
       }),
     });
@@ -76,7 +76,7 @@
         rows="10"
         id="userPrompt"
         type="text"
-        bind:value={userPrompt}
+        bind:value={$userPrompt}
         placeholder="Insert the prompt here"
         class="block p-2.5 border border-slate-500 rounded w-full text-sm text-gray-900 focus:ring-blue-300"
       />

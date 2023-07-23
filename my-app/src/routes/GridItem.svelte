@@ -1,4 +1,5 @@
 <script>
+  import { userPrompt } from "../store.js";
   export let completion;
   export let prompt;
 
@@ -8,6 +9,7 @@
     promptSide = !promptSide;
   }
   function onClick() {
+    userPrompt.set(prompt);
     flip();
   }
 </script>

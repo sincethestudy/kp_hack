@@ -8,6 +8,7 @@ import json
 
 import os
 import openai
+
 openai.organization = "org-hwLZwQZTV54TcPiMbEvqjUwo"
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -20,6 +21,7 @@ origins = [
     "http://localhost",
     "http://localhost:8080",
     "http://localhost:5174",
+    "http://localhost:5173",
 ]
 
 app = FastAPI()
@@ -49,17 +51,20 @@ def data_streamer(data):
 def read_root():
     return {"Hello": openai.Model.list()}
 
+
 @app.post("/complete")
 def complete(item: Item):
     system_message = item.system_message
     user_message = item.user_message
     inputs = item.inputs
-    
+
     prompt = Prompt(system_message, user_message)
     grid = Grid(prompt, (2, 2))
 
     def data_streamer():
         for text, idx in grid.sample_one(inputs):
-            yield json.dumps({'text': text, 'box_idx': idx}) + '\n'
-    
-    return StreamingResponse(data_streamer(), media_type="text/event-stream") # type: ignore
+            yield json.dumps({"text": text, "box_idx": idx}) + "\n"
+    return StreamingResponse(
+        data_streamer(), media_type="text/event-stream"
+    )  # type: ignore
+

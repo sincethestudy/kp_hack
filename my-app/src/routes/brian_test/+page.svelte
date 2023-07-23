@@ -6,7 +6,7 @@
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({prompt: 'test'}),
+            body: JSON.stringify({system_message: 'You are an animal generator', user_message: 'generate an animal that matches this country {0}', inputs: ['canada']}),
         });
         
         if (!response.ok) {
@@ -23,13 +23,20 @@
             if (done) {
                 break;
             }
-            // Decode the value into a string
             let decoded_value = decoder.decode(value, {stream: true});
-            streamed_response += decoded_value
+            let lines = decoded_value.split('\n').filter(Boolean);
+
+            lines.forEach(line => {
+                let { text, box_idx } = JSON.parse(line);
+                arr[box_idx] += text;
+                arr = [...arr];
+            });
         }
     }
 
     let streamed_response = ""
+
+    let arr = ["", "", "", ""]
 
 </script>
 
@@ -37,4 +44,8 @@
     TEST complete
 </button>
 
-<p>{streamed_response}</p>
+{#each arr as item}
+    <p>{item}</p>
+{/each}
+
+

@@ -1,0 +1,19 @@
+[
+    {
+        "role": "system",
+        "content": "test"
+    },
+    {
+        "role": "user",
+        "content": "test from canada"
+    },
+    {
+        "role": "assistant",
+        "content": [
+            "Hello! How can I assist you today?",
+            "Hello! It's nice to interact with someone from Canada. How can I assist you today?",
+            "Hello! How can I assist you today?",
+            "Hello! How can I assist you today?"
+        ]
+    }
+]

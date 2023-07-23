@@ -4,12 +4,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from fastapi.responses import StreamingResponse
 import time
-
+import json
 
 import os
 import openai
 openai.organization = "org-hwLZwQZTV54TcPiMbEvqjUwo"
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
+from grid import Grid
+from prompt import Prompt
 
 origins = [
     "http://localhost.tiangolo.com",
@@ -31,7 +34,9 @@ app.add_middleware(
 
 
 class Item(BaseModel):
-    prompt: str
+    system_message: str
+    user_message: str
+    inputs: Union[str, list]
 
 
 def data_streamer(data):
@@ -46,14 +51,15 @@ def read_root():
 
 @app.post("/complete")
 def complete(item: Item):
-
-    chat_completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo", 
-        messages=[
-            {"role": "user", "content": item.prompt}
-            ]
-        ).choices[0].message.content # type: ignore
+    system_message = item.system_message
+    user_message = item.user_message
+    inputs = item.inputs
     
-    print(chat_completion)
+    prompt = Prompt(system_message, user_message)
+    grid = Grid(prompt, (2, 2))
 
-    return StreamingResponse(data_streamer(chat_completion), media_type="text/plain") # type: ignore
+    def data_streamer():
+        for text, idx in grid.sample_one(inputs):
+            yield json.dumps({'text': text, 'box_idx': idx}) + '\n'
+    
+    return StreamingResponse(data_streamer(), media_type="text/event-stream") # type: ignore

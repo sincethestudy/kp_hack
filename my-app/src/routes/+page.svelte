@@ -24,8 +24,6 @@
     },
   ];
 
-  onGridMessage();
-
   async function sendPrompt() {
     await complete();
   }

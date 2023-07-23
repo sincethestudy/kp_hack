@@ -1,4 +1,5 @@
 <script>
+  import GridItem from "./GridItem.svelte";
   let userPrompt = "";
   let systemPrompt = "Mutate the user prompt into four new prompts.";
 
@@ -8,7 +9,22 @@
   $: console.log(promptVariables);
   $: dataVariables = [];
 
-  let arr = ["", "", "", ""];
+  let arr = [
+    {
+      completion: "This is a completion",
+      prompt: "This is the original prompt",
+    },
+    {
+      completion: "This is a completion",
+      prompt: "This is the original prompt",
+    },
+    {
+      completion: "This is a completion",
+      prompt: "This is the original prompt",
+    },
+  ];
+
+  onGridMessage();
 
   async function sendPrompt() {
     await complete();
@@ -97,9 +113,7 @@
     </section>
     <div class="container m-auto grid grid-cols-2 gap-4">
       {#each arr as item}
-        <div class="sticky top-15 z-0 flex h-24 flex-shrink-0 bg-neutral-600 bg-opacity-25 backdrop-blur-3xl">
-          <h1 class="tile-marker overflow-y-scroll">{item}</h1>
-        </div>
+        <GridItem {...item} />
       {/each}
     </div>
   </div>

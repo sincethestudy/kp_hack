@@ -1,4 +1,4 @@
-export async function complete(arr, dataVariables, systemPrompt, userPrompt) {
+export async function complete(userPrompt, systemPrompt, dataVariables) {
   const response = await fetch("http://localhost:8000/complete", {
     method: "POST",
     headers: {

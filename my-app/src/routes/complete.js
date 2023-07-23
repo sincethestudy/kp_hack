@@ -1,4 +1,5 @@
-async function complete(userPrompt, systemPrompt, dataVariables) {
+import { grid } from "../store.js";
+export async function complete(userPrompt, systemPrompt, dataVariables) {
   const response = await fetch("http://localhost:8000/complete", {
     method: "POST",
     headers: {
@@ -30,8 +31,13 @@ async function complete(userPrompt, systemPrompt, dataVariables) {
 
     lines.forEach((line) => {
       let { text, box_idx } = JSON.parse(line);
-      arr[box_idx] += text;
-      arr = [...arr];
+      grid.update((grid) => {
+        console.log(grid);
+        grid[box_idx].completion += text;
+        grid = [...grid];
+        console.log(grid);
+        return grid;
+      });
     });
   }
 }

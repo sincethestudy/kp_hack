@@ -1,3 +1,4 @@
+import re
 from chatgpt import complete
 
 
@@ -21,5 +22,13 @@ def mutate_prompt(prompt, instructions, n=1):
         {'role': 'user', 'content': user_message.format(prompt)}
     ]
 
-    mutated_prompts = complete(messages, model='gpt-3.5-turbo', n=n, stream=False, temperature=1.5)
+    placeholders = find_placeholders(prompt)
+
+    mutated_prompts = complete(messages, model='gpt-3.5-turbo', n=n*2, stream=False, temperature=1.5)
+    mutated_prompts = [m for m in mutated_prompts if find_placeholders(m) == placeholders][:n]
+
     return mutated_prompts
+
+
+def find_placeholders(s):
+    return re.findall(r'{[^}]*}', s)

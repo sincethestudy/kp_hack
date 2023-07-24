@@ -21,7 +21,7 @@
 <div class="h-full p-4 space-y-8">
   <h1 class="text-4xl font-bold">pMux</h1>
   <div class="flex flex-row h-full space-x-4">
-    <div class="left-side w-[45%] h-full space-y-4">
+    <div class="h-full space-y-4 left-side {mutated ? 'collapsed' : ''} ">
       <div>
         <label for="userPrompt">Input Prompt</label>
         <textarea
@@ -35,12 +35,19 @@
         {#if promptVariables}
           <h3>Prompt Variables</h3>
           {#each promptVariables as v, i}
-            <div class="flex flex-row items-center justify-start">
-              <label for={`input-${i}`} class="">{i}</label>
-              <input
+            <div
+              class="flex flex-col p-2.5 items-start justify-start gap-1 bg-gray-100 rounded"
+            >
+              <label for={`input-${i}`} class="text-blue-400"
+                >{"{ " + i + " }"}</label
+              >
+              <textarea
+                rows="4"
                 id={`input-${i}`}
+                type="text"
                 bind:value={dataVariables[i]}
-                class="border border-gray-500 rounded input"
+                placeholder="Variable data"
+                class="block w-full text-sm text-gray-900 border p-2.5 rounded bg-inherit focus:ring-blue-300"
               />
             </div>
           {/each}
@@ -81,8 +88,11 @@
 </div>
 
 <style>
-  .left-side * {
-    transition: flex 1s ease-in-out;
-    transform-origin: top left;
+  .left-side {
+    transition: width 0.3s ease-in;
+    width: 100%;
+  }
+  .left-side.collapsed {
+    width: 30%;
   }
 </style>

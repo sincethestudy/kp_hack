@@ -15,9 +15,7 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div
-  class="h-full m-1 p-2.5 rounded text-sm bg-opacity-25 bg-gray-300 cursor-pointer"
->
+<div class="h-full m-1 p-2.5 rounded text-sm bg-gray-100 cursor-pointer">
   <div class="flex flex-col justify-between h-full">
     <span class="overflow-y-scroll tile-marker">
       {promptSide ? prompt : completion}

@@ -13,11 +13,25 @@
   }
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
-  class="sticky z-0 flex flex-shrink-0 h-full p-2.5 rounded text-sm bg-opacity-25 top-15 bg-neutral-600 backdrop-blur-3xl"
-  on:click={onClick}
+  class="h-full m-1 p-2.5 rounded text-sm bg-opacity-25 bg-gray-300 cursor-pointer"
 >
-  <span class="overflow-y-scroll tile-marker">
-    {promptSide ? prompt : completion}
-  </span>
+  <div class="flex flex-col justify-between h-full">
+    <span class="overflow-y-scroll tile-marker">
+      {promptSide ? prompt : completion}
+    </span>
+
+    {#if prompt}
+      <div
+        class="flex flex-row self-end justify-start w-full gap-2 justify-self-end"
+      >
+        <button on:click={flip} class="p-2 bg-blue-300 rounded"
+          >See {promptSide ? "Completion" : "Prompt"}</button
+        >
+        <button on:click={onClick} class="p-2 bg-green-300 rounded">Use</button>
+      </div>
+    {/if}
+  </div>
 </div>

@@ -1,13 +1,13 @@
 import { grid } from "../store.js";
-export async function complete(userPrompt, systemPrompt, dataVariables) {
-  const response = await fetch("http://localhost:8000/complete", {
+export async function complete(mutatedPrompts, systemPrompt, dataVariables) {
+  const response = await fetch("http://localhost:8000/generate", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
       system_message: systemPrompt,
-      user_message: userPrompt,
+      prompts: mutatedPrompts,
       inputs: dataVariables,
     }),
   });

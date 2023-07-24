@@ -1,8 +1,8 @@
 <script>
   import GridItem from "./GridItem.svelte";
   import { complete } from "./complete.js";
-  import { userPrompt, grid } from "../store.js";
-  let systemPrompt = "Mutate the user prompt into four new prompts.";
+  import { userPrompt, grid, systemPrompt } from "../store.js";
+  import { mutate } from "./mutate";
 
   $: promptVariables = $userPrompt
     .match(/\{(.*?)\}/g)
@@ -11,46 +11,10 @@
   $: dataVariables = [];
 
   async function sendPrompt() {
-    await complete($userPrompt, systemPrompt, dataVariables);
+    const mutatePrompts = await mutate($userPrompt, $systemPrompt);
+    grid.set(mutatePrompts.map((p) => ({ prompt: p, completion: "" })));
+    await complete(mutatePrompts, $systemPrompt, dataVariables);
   }
-
-  // async function complete() {
-  //   const response = await fetch("http://localhost:8000/complete", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       system_message: systemPrompt,
-  //       user_message: $userPrompt,
-  //       inputs: dataVariables,
-  //     }),
-  //   });
-
-  //   if (!response.ok) {
-  //     throw new Error("HTTP error " + response.status);
-  //   }
-
-  //   let reader = response.body.getReader();
-  //   let decoder = new TextDecoder();
-
-  //   // streamed_response = "";
-
-  //   while (true) {
-  //     let { value, done } = await reader.read();
-  //     if (done) {
-  //       break;
-  //     }
-  //     let decoded_value = decoder.decode(value, { stream: true });
-  //     let lines = decoded_value.split("\n").filter(Boolean);
-
-  //     lines.forEach((line) => {
-  //       let { text, box_idx } = JSON.parse(line);
-  //       arr[box_idx] += text;
-  //       arr = [...arr];
-  //     });
-  //   }
-  // }
 </script>
 
 <main class="h-full">
@@ -79,13 +43,13 @@
           </div>
         {/each}
       {/if}
-      <label for="systemPrompt">Mutate Prompt</label>
+      <label for="systemPrompt">Additional Instructions</label>
       <textarea
         type="text"
         rows="10"
         id="systemPrompt"
-        bind:value={systemPrompt}
-        placeholder={systemPrompt}
+        bind:value={$systemPrompt}
+        placeholder={$systemPrompt}
         class="block p-2.5 border border-slate-500 rounded w-full text-sm text-gray-900 focus:ring-blue-300"
       />
       <button

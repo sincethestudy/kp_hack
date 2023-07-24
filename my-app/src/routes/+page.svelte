@@ -20,7 +20,7 @@
 
 <div class="h-full p-4 space-y-8">
   <h1 class="text-4xl font-bold">pMux</h1>
-  <div class="flex flex-row h-full">
+  <div class="flex flex-row h-full space-x-4">
     <div class="left-side w-[45%] h-full space-y-4">
       <div>
         <label for="userPrompt">Input Prompt</label>
